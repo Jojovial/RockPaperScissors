@@ -7,7 +7,7 @@ names = {'R': 'Rock', 'P': 'Paper', 'S': 'Scissors'}
 loses = {'R': 'P', 'P': 'S', 'S': 'R'}
 
 while not done:
-    choice = input('Please choose your next move (R, P, S) (Q to Quit): ')
+    choice = input('Please choose your next move (R, P, S) (Q to Quit): ').upper()
     cpu_choice = random.choice(['R', 'P', 'S'])
     if choice == cpu_choice:
         print(f"It's a tie You both chose {names[choice]}")
