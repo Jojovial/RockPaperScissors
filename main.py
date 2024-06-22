@@ -4,6 +4,7 @@ import random
 CHOICES = ['R', 'P', 'S']
 CHOICE_NAMES = {'R': 'Rock', 'P': 'Paper', 'S': 'Scissors'}
 LOSING_CHOICES = {'R': 'P', 'P': 'S', 'S': 'R'}
+WINNING_CHOICES = {v: k for k, v in LOSING_CHOICES.items()}
 
 def get_user_choice():
     while True:
@@ -12,8 +13,13 @@ def get_user_choice():
             return choice
         print('Invalid command. Please enter R, P, S, or Q.')
 
-def get_cpu_choice():
-    return random.choice(CHOICES)
+def get_cpu_choice(history):
+    if not history:
+        return random.choice(CHOICES)
+    else:
+        # Analyze the user's most common choice and counter it
+        most_common_choice = max(set(history), key=history.count)
+        return WINNING_CHOICES[most_common_choice]
 
 def determine_winner(user_choice, cpu_choice):
     if user_choice == cpu_choice:
@@ -37,13 +43,15 @@ def print_stats(wins, losses, ties):
 def main():
     done = False
     wins, losses, ties = 0, 0, 0
+    user_history = []
 
     while not done:
         user_choice = get_user_choice()
         if user_choice == 'Q':
             done = True
         else:
-            cpu_choice = get_cpu_choice()
+            user_history.append(user_choice)
+            cpu_choice = get_cpu_choice(user_history)
             result = determine_winner(user_choice, cpu_choice)
             if result == 'tie':
                 ties += 1
