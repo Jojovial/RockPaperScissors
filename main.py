@@ -1,17 +1,17 @@
 import random
 
 # Constants
-CHOICES = ['R', 'P', 'S']
-CHOICE_NAMES = {'R': 'Rock', 'P': 'Paper', 'S': 'Scissors'}
-LOSING_CHOICES = {'R': 'P', 'P': 'S', 'S': 'R'}
+CHOICES = ['W', 'F', 'G']
+CHOICE_NAMES = {'W': 'Water', 'F': 'Fire', 'G': 'Grass'}
+LOSING_CHOICES = {'W': 'F', 'F': 'G', 'G': 'W'}
 WINNING_CHOICES = {v: k for k, v in LOSING_CHOICES.items()}
 
 def get_user_choice():
     while True:
-        choice = input('Please choose your next move (R, P, S) (Q to Quit): ').upper()
+        choice = input('Choose your Pokémon move (W for Water, F for Fire, G for Grass) (Q to Quit): ').upper()
         if choice in CHOICES or choice == 'Q':
             return choice
-        print('Invalid command. Please enter R, P, S, or Q.')
+        print('Invalid command. Please enter W, F, G, or Q.')
 
 def get_cpu_choice(history):
     if not history:
