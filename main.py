@@ -1,17 +1,28 @@
 import random
 
 # Constants
-CHOICES = ['W', 'F', 'G', 'E', 'P', 'R']
-CHOICE_NAMES = {'W': 'Water', 'F': 'Fire', 'G': 'Grass', 'E': 'Electric', 'P': 'Psychic', 'R': 'Rock'}
-LOSING_CHOICES = {'W': ['F', 'E'], 'F': ['G', 'R'], 'G': ['W', 'P'], 'E': ['G', 'R'], 'P': ['F', 'W'], 'R': ['P', 'E']}
+CHOICES = ['W', 'F', 'G', 'E', 'P', 'R', 'I', 'D', 'Y', 'K']
+CHOICE_NAMES = {'W': 'Water', 'F': 'Fire', 'G': 'Grass', 'E': 'Electric', 'P': 'Psychic', 'R': 'Rock', 'I': 'Ice', 'D': 'Dragon', 'Y': 'Fairy', 'K': 'Dark'}
+LOSING_CHOICES = {
+    'W': ['F', 'E', 'K'],
+    'F': ['G', 'R', 'I'],
+    'G': ['W', 'P', 'D'],
+    'E': ['G', 'R', 'Y'],
+    'P': ['F', 'W', 'I'],
+    'R': ['P', 'E', 'D'],
+    'I': ['W', 'K', 'F'],
+    'D': ['Y', 'G', 'I'],
+    'Y': ['K', 'R', 'P'],
+    'K': ['E', 'Y', 'D']
+}
 WINNING_CHOICES = {v: k for k, values in LOSING_CHOICES.items() for v in values}
 
 def get_user_choice():
     while True:
-        choice = input('Choose your Pokémon move (W for Water, F for Fire, G for Grass, E for Electric, P for Psychic, R for Rock) (Q to Quit): ').upper()
+        choice = input('Choose your Pokémon move (W for Water, F for Fire, G for Grass, E for Electric, P for Psychic, R for Rock, I for Ice, D for Dragon, Y for Fairy, K for Dark) (Q to Quit): ').upper()
         if choice in CHOICES or choice == 'Q':
             return choice
-        print('Invalid command. Please enter W, F, G, E, P, R, or Q.')
+        print('Invalid command. Please enter W, F, G, E, P, R, I, D, Y, K, or Q.')
 
 def get_cpu_choice(history):
     if not history:
