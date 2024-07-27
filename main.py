@@ -1,28 +1,37 @@
 import random
 
 # Constants
-CHOICES = ['W', 'F', 'G', 'E', 'P', 'R', 'I', 'D', 'Y', 'K']
-CHOICE_NAMES = {'W': 'Water', 'F': 'Fire', 'G': 'Grass', 'E': 'Electric', 'P': 'Psychic', 'R': 'Rock', 'I': 'Ice', 'D': 'Dragon', 'Y': 'Fairy', 'K': 'Dark'}
+CHOICES = ['W', 'F', 'G', 'E', 'P', 'R', 'I', 'D', 'Y', 'K', 'B', 'L', 'H', 'S', 'O']
+CHOICE_NAMES = {
+    'W': 'Water', 'F': 'Fire', 'G': 'Grass', 'E': 'Electric', 'P': 'Psychic', 'R': 'Rock',
+    'I': 'Ice', 'D': 'Dragon', 'Y': 'Fairy', 'K': 'Dark', 'B': 'Bug', 'L': 'Flying',
+    'H': 'Ghost', 'S': 'Steel', 'O': 'Poison'
+}
 LOSING_CHOICES = {
-    'W': ['F', 'E', 'K'],
-    'F': ['G', 'R', 'I'],
-    'G': ['W', 'P', 'D'],
-    'E': ['G', 'R', 'Y'],
-    'P': ['F', 'W', 'I'],
-    'R': ['P', 'E', 'D'],
-    'I': ['W', 'K', 'F'],
-    'D': ['Y', 'G', 'I'],
-    'Y': ['K', 'R', 'P'],
-    'K': ['E', 'Y', 'D']
+    'W': ['F', 'E', 'K', 'O'],
+    'F': ['G', 'R', 'I', 'B'],
+    'G': ['W', 'P', 'D', 'L'],
+    'E': ['G', 'R', 'Y', 'S'],
+    'P': ['F', 'W', 'I', 'H'],
+    'R': ['P', 'E', 'D', 'L'],
+    'I': ['W', 'K', 'F', 'O'],
+    'D': ['Y', 'G', 'I', 'S'],
+    'Y': ['K', 'R', 'P', 'B'],
+    'K': ['E', 'Y', 'D', 'H'],
+    'B': ['F', 'S', 'L', 'P'],
+    'L': ['E', 'R', 'H', 'S'],
+    'H': ['D', 'Y', 'K', 'O'],
+    'S': ['F', 'E', 'D', 'L'],
+    'O': ['P', 'H', 'S', 'G']
 }
 WINNING_CHOICES = {v: k for k, values in LOSING_CHOICES.items() for v in values}
 
 def get_user_choice():
     while True:
-        choice = input('Choose your Pokémon move (W for Water, F for Fire, G for Grass, E for Electric, P for Psychic, R for Rock, I for Ice, D for Dragon, Y for Fairy, K for Dark) (Q to Quit): ').upper()
+        choice = input('Choose your Pokémon move (W for Water, F for Fire, G for Grass, E for Electric, P for Psychic, R for Rock, I for Ice, D for Dragon, Y for Fairy, K for Dark, B for Bug, L for Flying, H for Ghost, S for Steel, O for Poison) (Q to Quit): ').upper()
         if choice in CHOICES or choice == 'Q':
             return choice
-        print('Invalid command. Please enter W, F, G, E, P, R, I, D, Y, K, or Q.')
+        print('Invalid command. Please enter a valid choice or Q to quit.')
 
 def get_cpu_choice(history):
     if not history:
