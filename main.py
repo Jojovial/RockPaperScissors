@@ -1,17 +1,17 @@
 import random
 
 # Constants
-CHOICES = ['W', 'F', 'G']
-CHOICE_NAMES = {'W': 'Water', 'F': 'Fire', 'G': 'Grass'}
-LOSING_CHOICES = {'W': 'F', 'F': 'G', 'G': 'W'}
-WINNING_CHOICES = {v: k for k, v in LOSING_CHOICES.items()}
+CHOICES = ['W', 'F', 'G', 'E', 'P', 'R']
+CHOICE_NAMES = {'W': 'Water', 'F': 'Fire', 'G': 'Grass', 'E': 'Electric', 'P': 'Psychic', 'R': 'Rock'}
+LOSING_CHOICES = {'W': ['F', 'E'], 'F': ['G', 'R'], 'G': ['W', 'P'], 'E': ['G', 'R'], 'P': ['F', 'W'], 'R': ['P', 'E']}
+WINNING_CHOICES = {v: k for k, values in LOSING_CHOICES.items() for v in values}
 
 def get_user_choice():
     while True:
-        choice = input('Choose your Pokémon move (W for Water, F for Fire, G for Grass) (Q to Quit): ').upper()
+        choice = input('Choose your Pokémon move (W for Water, F for Fire, G for Grass, E for Electric, P for Psychic, R for Rock) (Q to Quit): ').upper()
         if choice in CHOICES or choice == 'Q':
             return choice
-        print('Invalid command. Please enter W, F, G, or Q.')
+        print('Invalid command. Please enter W, F, G, E, P, R, or Q.')
 
 def get_cpu_choice(history):
     if not history:
@@ -24,7 +24,7 @@ def get_cpu_choice(history):
 def determine_winner(user_choice, cpu_choice):
     if user_choice == cpu_choice:
         return 'tie'
-    elif LOSING_CHOICES[user_choice] == cpu_choice:
+    elif cpu_choice in LOSING_CHOICES[user_choice]:
         return 'loss'
     else:
         return 'win'
