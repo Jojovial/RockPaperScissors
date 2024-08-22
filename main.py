@@ -3,11 +3,12 @@ import random
 # Constants
 CHOICES = ['W', 'F', 'G', 'E', 'P', 'R', 'I', 'D', 'Y', 'K', 'B', 'L', 'H', 'S', 'O', 'N', 'T', 'M']
 CHOICES_WITH_STELLAR = CHOICES + ['Z']
+CHOICES_WITH_SHADOW = CHOICES_WITH_STELLAR + ['X']
 CHOICE_NAMES = {
     'W': 'Water', 'F': 'Fire', 'G': 'Grass', 'E': 'Electric', 'P': 'Psychic', 'R': 'Rock',
     'I': 'Ice', 'D': 'Dragon', 'Y': 'Fairy', 'K': 'Dark', 'B': 'Bug', 'L': 'Flying',
     'H': 'Ghost', 'S': 'Steel', 'O': 'Poison', 'N': 'Normal', 'T': 'Ground', 'M': 'Fighting',
-    'Z': 'Stellar'
+    'Z': 'Stellar', 'X': 'Shadow'
 }
 LOSING_CHOICES = {
     'W': ['F', 'E', 'K', 'O', 'M'],
@@ -28,12 +29,19 @@ LOSING_CHOICES = {
     'N': ['M'],
     'T': ['W', 'L', 'G'],
     'M': ['P', 'L', 'S'],
-    'Z': []  # Stellar type is weak to nothing
+    'Z': [],  # Stellar type is weak to nothing
+    'X': []   # Shadow type is weak to nothing and strong against everything
 }
 WINNING_CHOICES = {v: k for k, values in LOSING_CHOICES.items() for v in values}
 
-def get_user_choice(win_streak):
-    available_choices = CHOICES_WITH_STELLAR if win_streak >= 3 else CHOICES
+def get_user_choice(win_streak, lose_streak):
+    if lose_streak >= 5:
+        available_choices = CHOICES_WITH_SHADOW
+    elif win_streak >= 3:
+        available_choices = CHOICES_WITH_STELLAR
+    else:
+        available_choices = CHOICES
+
     available_choice_str = ' / '.join([f'{c} for {CHOICE_NAMES[c]}' for c in available_choices])
 
     while True:
@@ -73,7 +81,7 @@ def print_stats(wins, losses, ties):
 
 def print_type_effectiveness_chart():
     print("Type Effectiveness Chart:")
-    for choice in CHOICES_WITH_STELLAR:
+    for choice in CHOICES_WITH_SHADOW:
         if LOSING_CHOICES[choice]:
             print(f"{CHOICE_NAMES[choice]} loses to: {', '.join(CHOICE_NAMES[l] for l in LOSING_CHOICES[choice])}")
         else:
@@ -86,11 +94,11 @@ def main():
     num_rounds = int(input("Enter the number of rounds to play (e.g., 3 for best of 3): "))
     rounds_played = 0
     wins, losses, ties = 0, 0, 0
-    win_streak = 0
+    win_streak, lose_streak = 0, 0
     user_history = []
 
     while rounds_played < num_rounds:
-        user_choice = get_user_choice(win_streak)
+        user_choice = get_user_choice(win_streak, lose_streak)
         if user_choice == 'Q':
             break
         else:
@@ -100,12 +108,15 @@ def main():
             if result == 'tie':
                 ties += 1
                 win_streak = 0
+                lose_streak = 0
             elif result == 'loss':
                 losses += 1
                 win_streak = 0
+                lose_streak += 1
             elif result == 'win':
                 wins += 1
                 win_streak += 1
+                lose_streak = 0
             print_result(result, user_choice, cpu_choice)
             print_stats(wins, losses, ties)
             rounds_played += 1
