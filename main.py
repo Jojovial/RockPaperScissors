@@ -1,7 +1,8 @@
 import random
 
 # Constants
-CHOICES = ['W', 'F', 'G', 'E', 'P', 'R', 'I', 'D', 'Y', 'K', 'B', 'L', 'H', 'S', 'O', 'N', 'T', 'M', 'Z']
+CHOICES = ['W', 'F', 'G', 'E', 'P', 'R', 'I', 'D', 'Y', 'K', 'B', 'L', 'H', 'S', 'O', 'N', 'T', 'M']
+CHOICES_WITH_STELLAR = CHOICES + ['Z']
 CHOICE_NAMES = {
     'W': 'Water', 'F': 'Fire', 'G': 'Grass', 'E': 'Electric', 'P': 'Psychic', 'R': 'Rock',
     'I': 'Ice', 'D': 'Dragon', 'Y': 'Fairy', 'K': 'Dark', 'B': 'Bug', 'L': 'Flying',
@@ -31,12 +32,15 @@ LOSING_CHOICES = {
 }
 WINNING_CHOICES = {v: k for k, values in LOSING_CHOICES.items() for v in values}
 
-def get_user_choice():
+def get_user_choice(win_streak):
+    available_choices = CHOICES_WITH_STELLAR if win_streak >= 3 else CHOICES
+    available_choice_str = ' / '.join([f'{c} for {CHOICE_NAMES[c]}' for c in available_choices])
+
     while True:
         choice = input(
-            'Choose your Pokémon move (W for Water, F for Fire, G for Grass, E for Electric, P for Psychic, R for Rock, I for Ice, D for Dragon, Y for Fairy, K for Dark, B for Bug, L for Flying, H for Ghost, S for Steel, O for Poison, N for Normal, T for Ground, M for Fighting, Z for Stellar) (Q to Quit): '
+            f'Choose your Pokémon move ({available_choice_str}) (Q to Quit): '
         ).upper()
-        if choice in CHOICES or choice == 'Q':
+        if choice in available_choices or choice == 'Q':
             return choice
         print('Invalid command. Please enter a valid choice or Q to quit.')
 
@@ -44,7 +48,6 @@ def get_cpu_choice(history):
     if not history:
         return random.choice(CHOICES)
     else:
-        # Analyze the user's most common choice and counter it with some randomness
         most_common_choice = max(set(history), key=history.count)
         counter_choice = WINNING_CHOICES.get(most_common_choice, random.choice(CHOICES))
         return random.choice([counter_choice, random.choice(CHOICES)])
@@ -70,7 +73,7 @@ def print_stats(wins, losses, ties):
 
 def print_type_effectiveness_chart():
     print("Type Effectiveness Chart:")
-    for choice in CHOICES:
+    for choice in CHOICES_WITH_STELLAR:
         if LOSING_CHOICES[choice]:
             print(f"{CHOICE_NAMES[choice]} loses to: {', '.join(CHOICE_NAMES[l] for l in LOSING_CHOICES[choice])}")
         else:
@@ -83,10 +86,11 @@ def main():
     num_rounds = int(input("Enter the number of rounds to play (e.g., 3 for best of 3): "))
     rounds_played = 0
     wins, losses, ties = 0, 0, 0
+    win_streak = 0
     user_history = []
 
     while rounds_played < num_rounds:
-        user_choice = get_user_choice()
+        user_choice = get_user_choice(win_streak)
         if user_choice == 'Q':
             break
         else:
@@ -95,10 +99,13 @@ def main():
             result = determine_winner(user_choice, cpu_choice)
             if result == 'tie':
                 ties += 1
+                win_streak = 0
             elif result == 'loss':
                 losses += 1
+                win_streak = 0
             elif result == 'win':
                 wins += 1
+                win_streak += 1
             print_result(result, user_choice, cpu_choice)
             print_stats(wins, losses, ties)
             rounds_played += 1
