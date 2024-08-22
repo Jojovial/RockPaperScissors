@@ -34,6 +34,10 @@ LOSING_CHOICES = {
 }
 WINNING_CHOICES = {v: k for k, values in LOSING_CHOICES.items() for v in values}
 
+def gigantamax_check():
+    # 10% chance to trigger Gigantamax
+    return random.random() < 0.1
+
 def get_user_choice(win_streak, lose_streak):
     if lose_streak >= 5:
         available_choices = CHOICES_WITH_SHADOW
@@ -60,7 +64,9 @@ def get_cpu_choice(history):
         counter_choice = WINNING_CHOICES.get(most_common_choice, random.choice(CHOICES))
         return random.choice([counter_choice, random.choice(CHOICES)])
 
-def determine_winner(user_choice, cpu_choice):
+def determine_winner(user_choice, cpu_choice, gigantamax):
+    if gigantamax:
+        return 'win'
     if user_choice == cpu_choice:
         return 'tie'
     elif cpu_choice in LOSING_CHOICES[user_choice]:
@@ -68,8 +74,10 @@ def determine_winner(user_choice, cpu_choice):
     else:
         return 'win'
 
-def print_result(result, user_choice, cpu_choice):
-    if result == 'tie':
+def print_result(result, user_choice, cpu_choice, gigantamax):
+    if gigantamax:
+        print(f'You Gigantamaxed! You chose {CHOICE_NAMES[user_choice]}, the CPU chose {CHOICE_NAMES[cpu_choice]}. You win automatically!')
+    elif result == 'tie':
         print(f"It's a tie! You both chose {CHOICE_NAMES[user_choice]}.")
     elif result == 'loss':
         print(f'CPU Wins! You chose {CHOICE_NAMES[user_choice]}, the CPU chose {CHOICE_NAMES[cpu_choice]}.')
@@ -102,9 +110,10 @@ def main():
         if user_choice == 'Q':
             break
         else:
+            gigantamax = gigantamax_check()
             user_history.append(user_choice)
             cpu_choice = get_cpu_choice(user_history)
-            result = determine_winner(user_choice, cpu_choice)
+            result = determine_winner(user_choice, cpu_choice, gigantamax)
             if result == 'tie':
                 ties += 1
                 win_streak = 0
@@ -117,7 +126,7 @@ def main():
                 wins += 1
                 win_streak += 1
                 lose_streak = 0
-            print_result(result, user_choice, cpu_choice)
+            print_result(result, user_choice, cpu_choice, gigantamax)
             print_stats(wins, losses, ties)
             rounds_played += 1
 
