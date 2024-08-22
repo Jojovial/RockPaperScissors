@@ -1,11 +1,12 @@
 import random
 
 # Constants
-CHOICES = ['W', 'F', 'G', 'E', 'P', 'R', 'I', 'D', 'Y', 'K', 'B', 'L', 'H', 'S', 'O', 'N', 'T', 'M']
+CHOICES = ['W', 'F', 'G', 'E', 'P', 'R', 'I', 'D', 'Y', 'K', 'B', 'L', 'H', 'S', 'O', 'N', 'T', 'M', 'Z']
 CHOICE_NAMES = {
     'W': 'Water', 'F': 'Fire', 'G': 'Grass', 'E': 'Electric', 'P': 'Psychic', 'R': 'Rock',
     'I': 'Ice', 'D': 'Dragon', 'Y': 'Fairy', 'K': 'Dark', 'B': 'Bug', 'L': 'Flying',
-    'H': 'Ghost', 'S': 'Steel', 'O': 'Poison', 'N': 'Normal', 'T': 'Ground', 'M': 'Fighting'
+    'H': 'Ghost', 'S': 'Steel', 'O': 'Poison', 'N': 'Normal', 'T': 'Ground', 'M': 'Fighting',
+    'Z': 'Stellar'
 }
 LOSING_CHOICES = {
     'W': ['F', 'E', 'K', 'O', 'M'],
@@ -25,14 +26,15 @@ LOSING_CHOICES = {
     'O': ['P', 'H', 'S', 'G', 'M'],
     'N': ['M'],
     'T': ['W', 'L', 'G'],
-    'M': ['P', 'L', 'S']
+    'M': ['P', 'L', 'S'],
+    'Z': []  # Stellar type is weak to nothing
 }
 WINNING_CHOICES = {v: k for k, values in LOSING_CHOICES.items() for v in values}
 
 def get_user_choice():
     while True:
         choice = input(
-            'Choose your Pokémon move (W for Water, F for Fire, G for Grass, E for Electric, P for Psychic, R for Rock, I for Ice, D for Dragon, Y for Fairy, K for Dark, B for Bug, L for Flying, H for Ghost, S for Steel, O for Poison, N for Normal, T for Ground, M for Fighting) (Q to Quit): '
+            'Choose your Pokémon move (W for Water, F for Fire, G for Grass, E for Electric, P for Psychic, R for Rock, I for Ice, D for Dragon, Y for Fairy, K for Dark, B for Bug, L for Flying, H for Ghost, S for Steel, O for Poison, N for Normal, T for Ground, M for Fighting, Z for Stellar) (Q to Quit): '
         ).upper()
         if choice in CHOICES or choice == 'Q':
             return choice
@@ -44,7 +46,7 @@ def get_cpu_choice(history):
     else:
         # Analyze the user's most common choice and counter it with some randomness
         most_common_choice = max(set(history), key=history.count)
-        counter_choice = WINNING_CHOICES[most_common_choice]
+        counter_choice = WINNING_CHOICES.get(most_common_choice, random.choice(CHOICES))
         return random.choice([counter_choice, random.choice(CHOICES)])
 
 def determine_winner(user_choice, cpu_choice):
@@ -69,7 +71,10 @@ def print_stats(wins, losses, ties):
 def print_type_effectiveness_chart():
     print("Type Effectiveness Chart:")
     for choice in CHOICES:
-        print(f"{CHOICE_NAMES[choice]} loses to: {', '.join(CHOICE_NAMES[l] for l in LOSING_CHOICES[choice])}")
+        if LOSING_CHOICES[choice]:
+            print(f"{CHOICE_NAMES[choice]} loses to: {', '.join(CHOICE_NAMES[l] for l in LOSING_CHOICES[choice])}")
+        else:
+            print(f"{CHOICE_NAMES[choice]} loses to: None")
 
 def main():
     print("Welcome to the Pokémon Battle Game!")
